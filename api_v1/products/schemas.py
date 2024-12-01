@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class ProductBase(BaseModel):
@@ -8,7 +8,7 @@ class ProductBase(BaseModel):
     price: float
 
 
-class ProductCreate(BaseModel):
+class ProductCreate(ProductBase):
     pass
 
 
