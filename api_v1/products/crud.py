@@ -11,7 +11,7 @@ from sqlalchemy.ext.horizontal_shard import set_shard_id
 from core.models import Product
 from sqlalchemy import select
 from sqlalchemy.engine import Result
-from .schemas import ProductCreate
+from .schemas import ProductCreate, ProductUpdate, ProductPartial
 
 
 async def get_products(session: AsyncSession) -> list[Product]:
@@ -34,22 +34,20 @@ async def create_product(session: AsyncSession, product_in: ProductCreate) -> Pr
 
 
 async def update_product(
-        session: AsyncSession,
-        product: Product,
-        product_update: ProductUpdate
+    session: AsyncSession,
+    product: Product,
+    product_update: ProductUpdate | ProductPartial,
+    partial: bool = False,
 ) -> Product:
-    for name, value in product_update.model_dump().items():
+    for name, value in product_update.model_dump(exclude_unset=partial).items():
         setattr(product, name, value)
     await session.commit()
     return product
 
 
-async def product_update_partial(
-        session: AsyncSession,
-        product: Product,
-        product_update: ProductPartial
-) -> Product:
-    for name, value in product_update.model_dump(exclude_unset=True).items():
-        setattr(product, name, value)
+async def delete_product(
+    session: AsyncSession,
+    product: Product,
+) -> None:
+    await session.delete(product)
     await session.commit()
-    return product
