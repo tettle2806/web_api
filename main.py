@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Cookie
 
 from api_v1 import router as router_v1
 import uvicorn
@@ -33,8 +33,9 @@ def hello_index():
 
 
 @app.get("/hello/")
-def hello(name: str = "World"):
-    name = name.strip().title()
+def hello(
+    name: str | None = Cookie(default=None),
+):
     return {"message": f"Hello {name}!"}
 
 
