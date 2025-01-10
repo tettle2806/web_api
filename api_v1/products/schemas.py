@@ -11,13 +11,16 @@ class ProductBase(BaseModel):
 class ProductCreate(ProductBase):
     pass
 
+
 class ProductUpdate(ProductBase):
     pass
 
+
 class ProductPartial(ProductBase):
-    name :str = None
+    name: str = None
     description: str = None
     price: float = None
+
 
 class Product(ProductBase):
     model_config = ConfigDict(from_attributes=True)

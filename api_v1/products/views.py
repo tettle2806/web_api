@@ -17,7 +17,11 @@ async def get_products(
     return await crud.get_products(session=session)
 
 
-@router.post("/", response_model=Product, status_code=status.HTTP_201_CREATED,)
+@router.post(
+    "/",
+    response_model=Product,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_product(
     product_in: ProductCreate,
     session: AsyncSession = Depends(db_helper.scoped_session_dependency),
@@ -28,6 +32,7 @@ async def create_product(
 @router.get("/{product_id}/", response_model=Product)
 async def get_product(product: Product = Depends(product_by_id)):
     return product
+
 
 @router.put("/{product_id}/")
 async def update_product(
@@ -41,6 +46,7 @@ async def update_product(
         product_update=product_update,
     )
 
+
 @router.patch("/{product_id}/")
 async def update_product_partial(
     product_update: ProductPartial,
@@ -53,6 +59,7 @@ async def update_product_partial(
         product_update=product_update,
         partial=True,
     )
+
 
 @router.delete("/{product_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
