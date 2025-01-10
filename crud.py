@@ -153,6 +153,7 @@ async def create_product(
 
     return product
 
+
 async def create_orders_and_products(session: AsyncSession):
     order1 = await create_order(session, promocode="123")
     order2 = await create_order(session, promocode="FastAPI intro")
@@ -241,6 +242,7 @@ async def demo_m2m(session: AsyncSession):
         print(order.id, order.promocode, order.created_at, "products:")
         for product in order.products:
             print("-", product.id, product.name, product.price)
+
 
 async def main():
     async with db_helper.session_factory() as session:
