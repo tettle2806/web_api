@@ -4,6 +4,8 @@ Read
 Update
 Delete
 """
+import hashlib
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import User
@@ -17,12 +19,15 @@ def create_user(user_in: CreateUser) -> dict:
         "user": user,
     }
 
-async def create_user_crud(session: AsyncSession, username: str, email: str) -> User:
-    user = User(username=username, email=email)
+async def create_user_crud(session: AsyncSession, username: str, email: str, password:str) -> User:
+    user = User(username=username, email=email, password=password)
     session.add(user)
     await session.commit()
     print("user", user)
     return user
+
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 
 
