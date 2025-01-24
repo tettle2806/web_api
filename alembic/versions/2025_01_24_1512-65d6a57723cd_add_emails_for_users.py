@@ -1,8 +1,8 @@
-"""querty
+"""add emails for users
 
-Revision ID: 258ce74c68ed
+Revision ID: 65d6a57723cd
 Revises: 
-Create Date: 2025-01-11 18:11:04.569610
+Create Date: 2025-01-24 15:12:20.776378
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "258ce74c68ed"
+revision: str = "65d6a57723cd"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -37,15 +37,17 @@ def upgrade() -> None:
         "products",
         sa.Column("name", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=False),
-        sa.Column("price", sa.Float(), nullable=False),
+        sa.Column("price", sa.Integer(), nullable=False),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_table(
         "users",
         sa.Column("username", sa.String(length=32), nullable=False),
+        sa.Column("email", sa.String(length=255), nullable=True),
         sa.Column("id", sa.Integer(), nullable=False),
         sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("email"),
         sa.UniqueConstraint("username"),
     )
     op.create_table(
@@ -54,6 +56,7 @@ def upgrade() -> None:
         sa.Column("order_id", sa.Integer(), nullable=False),
         sa.Column("product_id", sa.Integer(), nullable=False),
         sa.Column("count", sa.Integer(), server_default="1", nullable=False),
+        sa.Column("unit_price", sa.Integer(), server_default="0", nullable=False),
         sa.ForeignKeyConstraint(
             ["order_id"],
             ["orders.id"],
@@ -63,9 +66,7 @@ def upgrade() -> None:
             ["products.id"],
         ),
         sa.PrimaryKeyConstraint("id"),
-        sa.UniqueConstraint(
-            "order_id", "product_id", name="idx_unique_order_product"
-        ),
+        sa.UniqueConstraint("order_id", "product_id", name="idx_unique_order_product"),
     )
     op.create_table(
         "posts",

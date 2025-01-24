@@ -1,6 +1,8 @@
 from contextlib import asynccontextmanager
+from typing import Annotated
 
-from fastapi import FastAPI, Cookie
+from fastapi import FastAPI, Cookie, Depends
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from api_v1 import router as router_v1
 import uvicorn
@@ -19,10 +21,17 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+security = HTTPBasic()
+
 app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
 
 app.include_router(router=items_router)
 app.include_router(router=users_router)
+
+
+@app.get("/users/me")
+def read_current_user(credentials: Annotated[HTTPBasicCredentials, Depends(security)]):
+    return {"username": credentials.username, "password": credentials.password}
 
 
 @app.get("/")
