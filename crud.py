@@ -16,8 +16,8 @@ from core.models import (
 )
 
 
-async def create_user(session: AsyncSession, username: str) -> User:
-    user = User(username=username)
+async def create_user_crud(session: AsyncSession, username: str, email: str) -> User:
+    user = User(username=username, email=email)
     session.add(user)
     await session.commit()
     print("user", user)
@@ -296,9 +296,9 @@ async def create_gift_product_for_existing_orders(session: AsyncSession):
 
 
 async def main_relations(session: AsyncSession):
-    await create_user(session=session, username="john")
-    await create_user(session=session, username="alice")
-    await create_user(session=session, username="sam")
+    await create_user_crud(session=session, username="john", email=)
+    await create_user_crud(session=session, username="alice", email=)
+    await create_user_crud(session=session, username="sam", email=)
     user_sam = await get_user_by_username(session=session, username="sam")
     user_john = await get_user_by_username(session=session, username="john")
     # user_bob = await get_user_by_username(session=session, username="bob")
