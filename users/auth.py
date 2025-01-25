@@ -10,18 +10,25 @@ from users.crud import get_user_by_username, hash_password
 
 security = HTTPBasic()
 
+
 async def get_current_username(
-        credentials: Annotated[HTTPBasicCredentials, Depends(security)], session: AsyncSession
+    credentials: Annotated[HTTPBasicCredentials, Depends(security)],
 ):
 
     current_username_bytes = credentials.username.encode("utf8")
     async with db_helper.session_factory() as session:
-        correct_username_bytes = await get_user_by_username(username=credentials.username, session=session)
-        correct_password_bytes = await get_user_by_username(username=credentials.username, session=session)
+        correct_username_bytes = await get_user_by_username(
+            username=credentials.username, session=session
+        )
+        correct_password_bytes = await get_user_by_username(
+            username=credentials.username, session=session
+        )
     is_correct_username = secrets.compare_digest(
         current_username_bytes, correct_username_bytes.username.encode("utf8")
     )
-    current_password_bytes = hash_password(credentials.password.encode("utf8")).encode("utf8")
+    current_password_bytes = hash_password(credentials.password.encode("utf8")).encode(
+        "utf8"
+    )
 
     is_correct_password = secrets.compare_digest(
         current_password_bytes, correct_password_bytes.password.encode("utf8")

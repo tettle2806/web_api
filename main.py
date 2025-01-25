@@ -1,4 +1,3 @@
-
 from contextlib import asynccontextmanager
 
 
@@ -12,6 +11,7 @@ from core.models import Base, db_helper
 from items_views import router as items_router
 from users.views import router as users_router
 from core.config import settings
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -30,12 +30,12 @@ app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
 app.include_router(router=items_router)
 
 
-
 @app.get("/")
 def hello_index():
     return {
         "message": "MAIN PAGE",
     }
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True)
