@@ -1,15 +1,11 @@
-from typing import Annotated, TYPE_CHECKING
-import secrets
-from fastapi import APIRouter, Depends, HTTPException, status
-from hashlib import sha256
-import hmac
+from typing import Annotated
 
+from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBasicCredentials
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.models import db_helper
 from users import crud
-from users.crud import get_user_by_username
+from users.auth import get_current_username
 from users.schemas import CreateUser
 
 
@@ -25,6 +21,10 @@ async def create_user(user: CreateUser):
         hash_pass = crud.hash_password(user.password)
         await crud.create_user_crud(username=user.username, email=user.email, session=session, password=hash_pass)
         return crud.create_user(user_in=user)
+
+@router.get("/login")
+def login_user(credentials: Annotated[HTTPBasicCredentials, Depends(get_current_username)]):
+    return {"username": credentials.username, "password": credentials.password}
 
 
 
