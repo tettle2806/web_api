@@ -15,6 +15,7 @@ def list_items():
     ]
 
 
+
 @router.get("/latest/")
 def get_latest_item():
     return {"item": {"id": "0", "name": "latest"}}
