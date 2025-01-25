@@ -30,7 +30,6 @@ async def get_user_by_username(session: AsyncSession, username: str) -> User | N
     # # user: User | None = result.scalar_one_or_none()
     # user: User | None = result.scalar_one()
     user: User | None = await session.scalar(stmt)
-    print("found user", username, user)
     return user
 
 
@@ -296,9 +295,9 @@ async def create_gift_product_for_existing_orders(session: AsyncSession):
 
 
 async def main_relations(session: AsyncSession):
-    await create_user_crud(session=session, username="john", email=)
-    await create_user_crud(session=session, username="alice", email=)
-    await create_user_crud(session=session, username="sam", email=)
+    await create_user_crud(session=session, username="john", email="alis@gmail.com")
+    await create_user_crud(session=session, username="alice", email="alis@gmail.com")
+    await create_user_crud(session=session, username="sam", email="alis@gmail.com")
     user_sam = await get_user_by_username(session=session, username="sam")
     user_john = await get_user_by_username(session=session, username="john")
     # user_bob = await get_user_by_username(session=session, username="bob")
@@ -343,7 +342,8 @@ async def demo_m2m(session: AsyncSession):
 async def main():
     async with db_helper.session_factory() as session:
         # await main_relations(session)
-        await demo_m2m(session)
+        # await demo_m2m(session)
+        await get_user_by_username(session, "string")
 
 
 if __name__ == "__main__":
