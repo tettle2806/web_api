@@ -1,9 +1,11 @@
 from contextlib import asynccontextmanager
 
 
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse, Response
+from fastapi import FastAPI, status, Request
+from fastapi.params import Cookie, Depends
+from fastapi.responses import RedirectResponse, HTMLResponse
 
+from fastapi_login import LoginManager
 
 from api_v1 import router as router_v1
 import uvicorn
@@ -23,6 +25,10 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+SECRET = "secret-key"
+
+manager = LoginManager(SECRET, tokenUrl="/user/login", use_cookie=True)
+manager.cookie_name = "some-name"
 
 app.include_router(router=users_router)
 app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
@@ -35,6 +41,12 @@ def hello_index():
     return {
         "message": "MAIN PAGE",
     }
+
+@app.get('/logout', response_class=HTMLResponse)
+def protected_route(request: Request, user=Depends(manager)):
+    resp = RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+    manager.set_cookie(resp, "")
+    return resp
 
 
 if __name__ == "__main__":
