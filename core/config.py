@@ -1,5 +1,8 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 BASE_DIR = Path(__file__).parent.parent
 DB_PATH = BASE_DIR / "db.sqlite3"
