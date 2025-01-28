@@ -17,6 +17,7 @@ pydantic-settings = "^2.6.1"
 alembic = "^1.14.0"
 black = "^24.10.0"
 fastapi-login = "^1.10.3"
+websocket-client = "^1.8.0"
 
 
 [tool.poetry.group.dev.dependencies]
