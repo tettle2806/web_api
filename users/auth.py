@@ -25,14 +25,15 @@ async def get_current_username(
             username=credentials.username, session=session
         )
     is_correct_username = secrets.compare_digest(
-        current_username_bytes , correct_username_bytes.encode("utf-8")
+        current_username_bytes, correct_username_bytes.encode("utf-8")
     )
     print("------------------------------------------------")
     print(current_username_bytes, correct_username_bytes)
     print("------------------------------------------------")
 
     is_correct_password = secrets.compare_digest(
-        current_password_bytes.encode("utf-8"), correct_password_bytes.password.encode("utf8")
+        current_password_bytes.encode("utf-8"),
+        correct_password_bytes.password.encode("utf8"),
     )
     if not (is_correct_username and is_correct_password):
         raise HTTPException(

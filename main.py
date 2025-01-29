@@ -12,6 +12,7 @@ from core.config import settings
 
 from blockchain_endpoints.views import router as blockchain_router
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with db_helper.engine.begin() as conn:
@@ -23,7 +24,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 SECRET = "secret-key"
-
 
 
 app.include_router(router=users_router)
@@ -38,10 +38,6 @@ def hello_index():
     return {
         "message": "MAIN PAGE",
     }
-
-
-
-
 
 
 if __name__ == "__main__":
