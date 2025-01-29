@@ -7,6 +7,7 @@ from blockchains_api.bitcoin_api import (
     binance_exchange_info,
     binance_ticker_info,
     binance_ticker24_info,
+    binance_book_ticker,
 )
 
 router = APIRouter(
@@ -33,13 +34,18 @@ async def exchange_info(ticker: str) -> dict:
     return logs
 
 
-@router.get("/tickerInfo")
+@router.get("/tickerInfo", )
 async def ticker_info(ticker: str) -> dict:
     logs = await binance_ticker_info(ticker)
     return logs
 
 
-@router.get("/tickerInfo24hr")
+@router.get("/Info24hr")
 async def ticker_info24hr(ticker: str) -> dict:
     logs = await binance_ticker24_info(ticker)
+    return logs
+
+@router.get("/bookticker")
+async def book_ticker(ticker: str) -> dict:
+    logs = await binance_book_ticker(ticker)
     return logs
