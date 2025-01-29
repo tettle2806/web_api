@@ -19,7 +19,11 @@ async def binance_ticker_info(ticker: str) -> dict:
 
 
 
-
-
-
-
+async def binance_ticker24_info(ticker: str) -> dict:
+    try:
+        r = requests.get(
+            f"https://data-api.binance.vision/api/v3/ticker/24hr?symbol={ticker}"
+        )
+        return r.json()
+    except Exception as e:
+        return {"error": str(e)}
