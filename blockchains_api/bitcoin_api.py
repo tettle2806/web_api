@@ -1,3 +1,13 @@
+import requests
+
+
+async def binance_ticker_prices(ticker: str) -> dict:
+    r = requests.get(f'https://data-api.binance.vision/api/v3/ticker/price?symbol={ticker}')
+    return r.json()
+
+
+
+
 # # Simple python websocket client
 # # https://github.com/websocket-client/websocket-client
 # from core.config import api_key, token
@@ -19,12 +29,4 @@
 # ws.close()
 
 
-import requests
 
-from core.config import token
-
-
-
-r = requests.get('https://data-api.binance.vision/api/v3/ticker/price')
-
-print(r.json())
