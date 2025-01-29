@@ -20,6 +20,9 @@ fastapi-login = "^1.10.3"
 websocket-client = "^1.8.0"
 python-dotenv = "^1.0.1"
 requests = "^2.32.3"
+matplotlib = "^3.10.0"
+pandas = "^2.2.3"
+ccxt = "^4.4.52"
 
 
 [tool.poetry.group.dev.dependencies]
