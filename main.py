@@ -1,12 +1,17 @@
+import asyncio
+import logging
+import sys
 from contextlib import asynccontextmanager
 
 
 from fastapi import FastAPI
+from starlette.responses import RedirectResponse
 
 from api_v1 import router as router_v1
 import uvicorn
 from core.models import Base, db_helper
 from items_views import router as items_router
+from telegram_bot.run import main
 from users.views import router as users_router
 from core.config import settings
 
@@ -35,9 +40,7 @@ app.include_router(router=blockchain_router)
 
 @app.get("/")
 def hello_index():
-    return {
-        "message": "MAIN PAGE",
-    }
+    return RedirectResponse(url="/docs")
 
 
 if __name__ == "__main__":

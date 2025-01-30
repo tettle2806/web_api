@@ -34,7 +34,9 @@ async def exchange_info(ticker: str) -> dict:
     return logs
 
 
-@router.get("/tickerInfo", )
+@router.get(
+    "/tickerInfo",
+)
 async def ticker_info(ticker: str) -> dict:
     logs = await binance_ticker_info(ticker)
     return logs
@@ -44,6 +46,7 @@ async def ticker_info(ticker: str) -> dict:
 async def ticker_info24hr(ticker: str) -> dict:
     logs = await binance_ticker24_info(ticker)
     return logs
+
 
 @router.get("/bookticker")
 async def book_ticker(ticker: str) -> dict:

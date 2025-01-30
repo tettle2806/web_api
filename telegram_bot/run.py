@@ -6,9 +6,11 @@ from aiogram import Bot, Dispatcher, html
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types.web_app_info import WebAppInfo
 
 from core.config import TOKEN
+
 # Bot token can be obtained via https://t.me/BotFather
 
 # All handlers should be attached to the Router (or Dispatcher)
@@ -26,27 +28,40 @@ async def command_start_handler(message: Message) -> None:
     # and the target chat will be passed to :ref:`aiogram.methods.send_message.SendMessage`
     # method automatically or call API method directly via
     # Bot instance: `bot.send_message(chat_id=message.chat.id, ...)`
-    await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
+    markup = ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(
+                    text="web app", web_app=WebAppInfo(url="https://c34d-89-236-218-10.ngrok-free.app/")
+                )
+            ],
+        ]
+    )
+    await message.answer(
+        f"Hello, {html.bold(message.from_user.full_name)}!", reply_markup=markup
+    )
 
 
 @dp.message()
 async def echo_handler(message: Message) -> None:
-    """
-    Handler will forward receive a message back to the sender
-
-    By default, message handler will handle all message types (like a text, photo, sticker etc.)
-    """
-    try:
-        # Send a copy of the received message
-        await message.send_copy(chat_id=message.chat.id)
-    except TypeError:
-        # But not all the types is supported to be copied so need to handle it
-        await message.answer("Nice try!")
+    markup = ReplyKeyboardMarkup(
+        keyboard=[
+            [
+                KeyboardButton(
+                    text="web app", web_app=WebAppInfo(url="https://c34d-89-236-218-10.ngrok-free.app/")
+                )
+            ],
+        ]
+    )
+    await message.answer(message.text, reply_markup=markup)
 
 
 async def main() -> None:
     # Initialize Bot instance with default bot properties which will be passed to all API calls
-    bot = Bot(token='6665851397:AAFb-Zu5ziQllCiu_f-Jxoku4XOPoZ6cDXc', default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+    bot = Bot(
+        token="6665851397:AAFb-Zu5ziQllCiu_f-Jxoku4XOPoZ6cDXc",
+        default=DefaultBotProperties(parse_mode=ParseMode.HTML),
+    )
 
     # And the run events dispatching
     await dp.start_polling(bot)
