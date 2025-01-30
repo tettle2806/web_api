@@ -23,6 +23,9 @@ requests = "^2.32.3"
 matplotlib = "^3.10.0"
 pandas = "^2.2.3"
 ccxt = "^4.4.52"
+keyboard = "^0.13.5"
+winloop = "^0.1.8"
+aiohttp = "3.9.5"
 
 
 [tool.poetry.group.dev.dependencies]
