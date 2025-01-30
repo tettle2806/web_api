@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 token = os.getenv("TOKEN")
+TOKEN = os.getenv("BOT_TOKEN")
 api_key = os.getenv("API_KEY")
 
 BASE_DIR = Path(__file__).parent.parent
