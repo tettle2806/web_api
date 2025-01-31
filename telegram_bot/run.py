@@ -32,7 +32,10 @@ async def command_start_handler(message: Message) -> None:
         keyboard=[
             [
                 KeyboardButton(
-                    text="web app", web_app=WebAppInfo(url="https://c34d-89-236-218-10.ngrok-free.app/")
+                    text="web app",
+                    web_app=WebAppInfo(
+                        url="https://c34d-89-236-218-10.ngrok-free.app/"
+                    ),
                 )
             ],
         ]
