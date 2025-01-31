@@ -1,4 +1,7 @@
 from pathlib import Path
+from fastapi.security import OAuth2PasswordBearer
+
+from passlib.context import CryptContext
 from pydantic_settings import BaseSettings
 import os
 from dotenv import load_dotenv
@@ -8,6 +11,9 @@ load_dotenv()
 token = os.getenv("TOKEN")
 TOKEN = os.getenv("BOT_TOKEN")
 api_key = os.getenv("API_KEY")
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 BASE_DIR = Path(__file__).parent.parent
 DB_PATH = BASE_DIR / "db.sqlite3"

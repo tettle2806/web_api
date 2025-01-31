@@ -14,12 +14,12 @@ from core.models import User
 from users.schemas import CreateUser
 
 
-def create_user(user_in: CreateUser) -> dict:
-    user = user_in.model_dump()
-    return {
-        "success": True,
-        "user": user,
-    }
+# def create_user(user_in: CreateUser) -> dict:
+#     user = user_in.model_dump()
+#     return {
+#         "success": True,
+#         "user": user,
+#     }
 
 
 async def create_user_crud(

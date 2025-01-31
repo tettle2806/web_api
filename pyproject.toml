@@ -26,6 +26,8 @@ ccxt = "^4.4.52"
 keyboard = "^0.13.5"
 winloop = "^0.1.8"
 aiohttp = "3.9.5"
+pyjwt = "^2.10.1"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 
 [tool.poetry.group.dev.dependencies]
