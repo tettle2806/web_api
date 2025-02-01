@@ -20,11 +20,11 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 BASE_DIR = Path(__file__).parent.parent
-DB_PATH = BASE_DIR / "db.sqlite3"
+DB_URL = os.getenv("DB_URL")
 
 
 class DbSettings(BaseSettings):
-    url: str = f"sqlite+aiosqlite:///{DB_PATH}"
+    url: str = DB_URL
     echo: bool = True
 
 
