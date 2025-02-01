@@ -29,7 +29,7 @@ async def create_user(user: CreateUser):
         return crud.create_user(user_in=user)
 
 
-@router.get("/token")
+@router.post("/token")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
