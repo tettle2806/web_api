@@ -1,15 +1,20 @@
-FROM mcr.microsoft.com/devcontainers/python:1-3.11-bullseye
+FROM python:3.12.3
+
+WORKDIR /web_api
+
+ENV PYTHONDONTWRITEBYTECODE 1
 
 ENV PYTHONUNBUFFERED 1
 
-# [Optional] If your requirements rarely change, uncomment this section to add them to the image.
-# COPY requirements.txt /tmp/pip-tmp/
-# RUN pip3 --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-#    && rm -rf /tmp/pip-tmp
+COPY requirements.txt requirements.txt
 
-# [Optional] Uncomment this section to install additional OS packages.
-# RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-#     && apt-get -y install --no-install-recommends <your-package-list-here>
+RUN pip install poetry
+
+COPY ./pyproject.toml ./poetry.lock* /tmp/
+
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
+
+COPY ./web_api /code/app
 
 
-
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
