@@ -5,7 +5,11 @@ Update
 Delete
 """
 
+from typing import Annotated, Union
+
 import hashlib
+
+from pydantic import EmailStr
 from sqlalchemy import select
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,14 +40,13 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
-    stmt = select(User).where(User.username == username)
-    # result: Result = await session.execute(stmt)
-    # user: User | None = result.scalar_one_or_none()
-    # user: User | None = result.scalar_one()
-    user: User | None = await session.scalar(stmt)
-    print('ooooooooooooooooooooooooooooooooooooooooo')
-    print(user)
-    print('ooooooooooooooooooooooooooooooooooooooooo')
-    return user
-
+async def get_user_by_username(
+    session: AsyncSession, email: EmailStr
+) -> Union[User, None]:
+    try:
+        stmt = select(User).where(User.email == email)
+        user: User | None = await session.scalar(stmt)
+        return user
+    except Exception as e:
+        print(e)
+        return None

@@ -1,9 +1,8 @@
-
 from fastapi import APIRouter
 
 from core.models import db_helper
 from users import crud
-from users.schemas import CreateUser
+from users.schemas import UserPD
 
 router = APIRouter(
     prefix="/users",
@@ -12,7 +11,7 @@ router = APIRouter(
 
 
 @router.post("/")
-async def create_user(user: CreateUser):
+async def create_user(user: UserPD):
     async with db_helper.session_factory() as session:
         hash_pass = crud.hash_password(user.password)
         try:
@@ -28,5 +27,3 @@ async def create_user(user: CreateUser):
                 "message": str(e),
             }
         return crud.create_user(user_in=user)
-
-
