@@ -1,23 +1,27 @@
-from typing import Annotated
-from annotated_types import MinLen, MaxLen
-from pydantic import BaseModel, EmailStr
+from uuid import UUID
+from pydantic import BaseModel, Field, EmailStr
 
 
-class UserPD(BaseModel):
-    username: str
-    email: EmailStr
-    password: str
-
-
-class UserDTO(UserPD):
-    pass
-
-
-class Token(BaseModel):
+class TokenSchema(BaseModel):
     access_token: str
-    token_type: str
-    access_token_expires: str
+    refresh_token: str
 
 
-class TokenGet(BaseModel):
-    token: str
+class TokenPayload(BaseModel):
+    sub: str = None
+    exp: int = None
+
+
+class UserAuth(BaseModel):
+    username: str = Field(..., description="user name")
+    email: str = Field(..., description="user email")
+    password: str = Field(..., min_length=5, max_length=24, description="user password")
+
+
+class UserOut(BaseModel):
+    id: UUID
+    email: str
+
+
+class SystemUser(UserOut):
+    password: str

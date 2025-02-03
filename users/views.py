@@ -1,11 +1,18 @@
-from fastapi import APIRouter
+from uuid import uuid4
+
+from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordRequestForm
 
 from core.models import db_helper
-from users import crud
-from users.auth import UserAuth
-from users.schemas import UserPD, TokenGet
-
-user_auth = UserAuth()
+from users.crud import get_user_by_email, create_user_crud, get_user_by_username
+from users.deps import get_current_user
+from users.schemas import TokenSchema, UserOut, UserAuth, SystemUser
+from users.utils import (
+    get_hashed_password,
+    create_access_token,
+    create_refresh_token,
+    verify_password,
+)
 
 router = APIRouter(
     prefix="/users",
@@ -13,33 +20,77 @@ router = APIRouter(
 )
 
 
-@router.post("/")
-async def create_user(user: UserPD):
+# @router.post("/")
+# async def create_user(user:UserAuth ):
+#     async with db_helper.session_factory() as session:
+#         hash_pass = crud.hash_password(user.password)
+#         try:
+#             await crud.create_user_crud(
+#                 username=user.username,
+#                 email=user.email,
+#                 session=session,
+#                 password=hash_pass,
+#             )
+#         except Exception as e:
+#             return {
+#                 "success": False,
+#                 "message": str(e),
+#             }
+#         return crud.create_user(user_in=user)
+
+
+@router.post("/signup", summary="Create new user", response_model=UserOut)
+async def create_user(data: UserAuth):
+    # querying database to check if user already exist
+    user = await get_user_by_email(data.email)
+    if user is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email already exist",
+        )
+    user = {
+        "email": data.email,
+        "password": get_hashed_password(data.password),
+        "id": str(uuid4()),
+    }
     async with db_helper.session_factory() as session:
-        hash_pass = crud.hash_password(user.password)
-        try:
-            await crud.create_user_crud(
-                username=user.username,
-                email=user.email,
-                session=session,
-                password=hash_pass,
-            )
-        except Exception as e:
-            return {
-                "success": False,
-                "message": str(e),
-            }
-        return crud.create_user(user_in=user)
+        await create_user_crud(
+            session=session,
+            username=data.username,
+            email=data.email,
+            password=data.password,
+        )  # saving user to database
+    return user
 
 
-@router.post("/login")
-async def login(user: UserPD):
-    # получаем токен и возращаем клиенту
-    token = user_auth.login_for_access_token(user.email, user.password)
-    return token
+@router.post(
+    "/login",
+    summary="Create access and refresh tokens for user",
+    response_model=TokenSchema,
+)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = get_user_by_username(form_data.username)
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect email or password",
+        )
+
+    hashed_pass = user["password"]
+    if not verify_password(form_data.password, hashed_pass):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Incorrect email or password",
+        )
+
+    return {
+        "access_token": create_access_token(user["email"]),
+        "refresh_token": create_refresh_token(user["email"]),
+    }
 
 
-@router.post("/me")
-async def read_me(token: TokenGet):
-    # декодируем токен и получаем обьект пользователя
-    return user_auth.decode_token(token.token)
+@router.get(
+    "/me", summary="Get details of currently logged in user", response_model=UserOut
+)
+async def get_me(user: SystemUser = Depends(get_current_user)):
+    return user

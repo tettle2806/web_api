@@ -1,20 +1,14 @@
 FROM python:3.12.3
+LABEL authors="Rasulov Zayniddin"
 
-WORKDIR /web_api
-
+WORKDIR ./app
 ENV PYTHONDONTWRITEBYTECODE 1
-
 ENV PYTHONUNBUFFERED 1
 
-COPY requirements.txt requirements.txt
+COPY . /app
 
-RUN pip install poetry
 
-COPY ./pyproject.toml ./poetry.lock* /tmp/
-
-RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
-
-COPY ./web_api /code/app
+RUN pip install -r requirements.txt
 
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
