@@ -2,7 +2,10 @@ from fastapi import APIRouter
 
 from core.models import db_helper
 from users import crud
-from users.schemas import UserPD
+from users.auth import UserAuth
+from users.schemas import UserPD, TokenGet
+
+user_auth = UserAuth()
 
 router = APIRouter(
     prefix="/users",
@@ -27,3 +30,16 @@ async def create_user(user: UserPD):
                 "message": str(e),
             }
         return crud.create_user(user_in=user)
+
+
+@router.post("/login")
+async def login(user: UserPD):
+    # получаем токен и возращаем клиенту
+    token = user_auth.login_for_access_token(user.email, user.password)
+    return token
+
+
+@router.post("/me")
+async def read_me(token: TokenGet):
+    # декодируем токен и получаем обьект пользователя
+    return user_auth.decode_token(token.token)

@@ -33,7 +33,8 @@ class UserAuth:
         return encoded_jwt
 
     async def decode_token(self, token: str):
-        pass
+        payload = jwt.decode(token, config.SECRET_KEY, algorithms=[config.ALGORITHM])
+        return payload
 
     async def login_for_access_token(self, email: str, password: str) -> Token:
         user: UserDTO = self.validate_user(email=email, password=password)
