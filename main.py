@@ -11,7 +11,6 @@ from api_v1 import router as router_v1
 import uvicorn
 from core.models import Base, db_helper
 from items_views import router as items_router
-from telegram_bot.run import main
 from users.views import router as users_router
 from core.config import settings
 

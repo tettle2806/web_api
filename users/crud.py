@@ -10,16 +10,16 @@ from sqlalchemy import select
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from core.models import User
+from core.models import User, db_helper
 from users.schemas import CreateUser
 
 
-# def create_user(user_in: CreateUser) -> dict:
-#     user = user_in.model_dump()
-#     return {
-#         "success": True,
-#         "user": user,
-#     }
+def create_user(user_in: CreateUser) -> dict:
+    user = user_in.model_dump()
+    return {
+        "success": True,
+        "user": user,
+    }
 
 
 async def create_user_crud(
@@ -42,4 +42,8 @@ async def get_user_by_username(session: AsyncSession, username: str) -> User | N
     # user: User | None = result.scalar_one_or_none()
     # user: User | None = result.scalar_one()
     user: User | None = await session.scalar(stmt)
+    print('ooooooooooooooooooooooooooooooooooooooooo')
+    print(user)
+    print('ooooooooooooooooooooooooooooooooooooooooo')
     return user
+
