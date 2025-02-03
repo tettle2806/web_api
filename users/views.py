@@ -42,7 +42,8 @@ router = APIRouter(
 @router.post("/signup", summary="Create new user", response_model=UserOut)
 async def create_user(data: UserAuth):
     # querying database to check if user already exist
-    user = await get_user_by_email(data.email)
+    async with db_helper.session_factory() as session:
+        user = await get_user_by_email(session=session,email=data.email)
     if user is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -58,7 +59,7 @@ async def create_user(data: UserAuth):
             session=session,
             username=data.username,
             email=data.email,
-            password=data.password,
+            password=get_hashed_password(data.password),
         )  # saving user to database
     return user
 
@@ -69,15 +70,17 @@ async def create_user(data: UserAuth):
     response_model=TokenSchema,
 )
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = get_user_by_username(form_data.username)
+    async with db_helper.session_factory() as session:
+        user = await get_user_by_username(session=session, username=form_data.username)
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect email or password",
         )
 
-    hashed_pass = user["password"]
-    if not verify_password(form_data.password, hashed_pass):
+    hashed_pass = user.password
+    db_hash_password = get_hashed_password(form_data.password)
+    if not verify_password(db_hash_password, hashed_pass):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Incorrect email or password",
