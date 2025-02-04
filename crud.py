@@ -1,7 +1,6 @@
 import asyncio
 
 from sqlalchemy import select
-from sqlalchemy.engine import Result
 from sqlalchemy.orm import joinedload, selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,13 +23,7 @@ async def create_user_crud(session: AsyncSession, username: str, email: str) -> 
     return user
 
 
-async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
-    stmt = select(User).where(User.username == username)
-    # result: Result = await session.execute(stmt)
-    # # user: User | None = result.scalar_one_or_none()
-    # user: User | None = result.scalar_one()
-    user: User | None = await session.scalar(stmt)
-    return user
+
 
 
 async def create_user_profile(
@@ -338,12 +331,20 @@ async def demo_m2m(session: AsyncSession):
     await demo_get_orders_with_products_with_assoc(session)
     await create_gift_product_for_existing_orders(session)
 
+async def get_user_by_username(session: AsyncSession, username: str) -> User | None:
+    stmt = select(User).where(User.username == username)
+    # result: Result = await session.execute(stmt)
+    # # user: User | None = result.scalar_one_or_none()
+    # user: User | None = result.scalar_one()
+    user: User | None = await session.scalar(stmt)
+    return user
 
 async def main():
     async with db_helper.session_factory() as session:
+        pass
         # await main_relations(session)
         # await demo_m2m(session)
-        await get_user_by_username(session, "string")
+        # await get_user_by_username(session, "123")
 
 
 if __name__ == "__main__":
