@@ -11,7 +11,9 @@ if TYPE_CHECKING:
 
 
 class User(Base):
-    uuid: Mapped[UUID] = mapped_column(UUID(as_uuid=True), unique=True, default=UUID(as_uuid=True))
+    uuid: Mapped[UUID] = mapped_column(
+        UUID(as_uuid=True), unique=True, default=UUID(as_uuid=True), nullable=True
+    )
     username: Mapped[str] = mapped_column(String(32), unique=True)
     email = mapped_column(String(255), unique=True)
     password = mapped_column(String(255))
