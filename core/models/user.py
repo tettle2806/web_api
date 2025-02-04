@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.dialects.postgresql import UUID
 from .base import Base
 
 if TYPE_CHECKING:
@@ -10,6 +11,7 @@ if TYPE_CHECKING:
 
 
 class User(Base):
+    uuid: Mapped[UUID] = mapped_column(UUID(as_uuid=True), unique=True, default=UUID(as_uuid=True))
     username: Mapped[str] = mapped_column(String(32), unique=True)
     email = mapped_column(String(255), unique=True)
     password = mapped_column(String(255))
