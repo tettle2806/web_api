@@ -43,7 +43,7 @@ router = APIRouter(
 async def create_user(data: UserAuth):
     # querying database to check if user already exist
     async with db_helper.session_factory() as session:
-        user = await get_user_by_email(session=session,email=data.email)
+        user = await get_user_by_email(session=session, email=data.email)
     if user is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -52,7 +52,7 @@ async def create_user(data: UserAuth):
     user = {
         "email": data.email,
         "password": get_hashed_password(data.password),
-        "id": str(uuid4()),
+        "uuid": uuid4(),
     }
     async with db_helper.session_factory() as session:
         await create_user_crud(
@@ -60,36 +60,9 @@ async def create_user(data: UserAuth):
             username=data.username,
             email=data.email,
             password=get_hashed_password(data.password),
+            uuid=user["uuid"],
         )  # saving user to database
     return user
-
-
-@router.post(
-    "/login",
-    summary="Create access and refresh tokens for user",
-    response_model=TokenSchema,
-)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    async with db_helper.session_factory() as session:
-        user = await get_user_by_username(session=session, username=form_data.username)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password",
-        )
-
-    hashed_pass = user.password
-    db_hash_password = get_hashed_password(form_data.password)
-    if not verify_password(db_hash_password, hashed_pass):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password",
-        )
-
-    return {
-        "access_token": create_access_token(user.email),
-        "refresh_token": create_refresh_token(user.email),
-    }
 
 
 @router.get(
