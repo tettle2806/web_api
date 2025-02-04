@@ -36,9 +36,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-SECRET = "secret-key"
-
-
 app.include_router(router=users_router)
 app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
 
