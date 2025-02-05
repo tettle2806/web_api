@@ -1,17 +1,13 @@
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordRequestForm
 
 from core.models import db_helper
-from users.crud import get_user_by_email, create_user_crud, get_user_by_username
+from users.crud import get_user_by_email, create_user_crud
 from users.deps import get_current_user
-from users.schemas import TokenSchema, UserOut, UserAuth, SystemUser
+from users.schemas import UserOut, UserAuth, SystemUser
 from users.utils import (
     get_hashed_password,
-    create_access_token,
-    create_refresh_token,
-    verify_password,
 )
 
 router = APIRouter(
@@ -20,23 +16,6 @@ router = APIRouter(
 )
 
 
-# @router.post("/")
-# async def create_user(user:UserAuth ):
-#     async with db_helper.session_factory() as session:
-#         hash_pass = crud.hash_password(user.password)
-#         try:
-#             await crud.create_user_crud(
-#                 username=user.username,
-#                 email=user.email,
-#                 session=session,
-#                 password=hash_pass,
-#             )
-#         except Exception as e:
-#             return {
-#                 "success": False,
-#                 "message": str(e),
-#             }
-#         return crud.create_user(user_in=user)
 
 
 @router.post("/signup", summary="Create new user", response_model=UserOut)
