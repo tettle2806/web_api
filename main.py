@@ -1,13 +1,14 @@
-from contextlib import asynccontextmanager
-
-
-from fastapi import FastAPI, Depends, HTTPException, status, WebSocket
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.requests import Request
+from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 from api_v1 import router as router_v1
 import uvicorn
-from core.models import Base, db_helper
+from core.models import db_helper
+from exeptions import TokenExpiredException, TokenNoFoundException
 from items_views import router as items_router
 from users.crud import get_user_by_username
 from users.schemas import TokenSchema
@@ -23,15 +24,19 @@ from core.config import settings
 from blockchain_endpoints.views import router as blockchain_router
 
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     async with db_helper.engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.create_all)
-#
-#     yield
+app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-app = FastAPI(lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "*"
+    ],  # Разрешить запросы с любых источников. Можете ограничить список доменов
+    allow_credentials=True,
+    allow_methods=["*"],  # Разрешить все методы (GET, POST, PUT, DELETE и т.д.)
+    allow_headers=["*"],  # Разрешить все заголовки
+)
 
 app.include_router(router=users_router)
 app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
@@ -39,52 +44,10 @@ app.include_router(router=router_v1, prefix=settings.api_v1_prefix)
 app.include_router(router=items_router)
 app.include_router(router=blockchain_router)
 
-html = """
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <form action="" onsubmit="sendMessage(event)">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
-        </ul>
-        <script>
-            var ws = new WebSocket("ws://localhost:8000/ws");
-            ws.onmessage = function(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content)
-                messages.appendChild(message)
-            };
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                ws.send(input.value)
-                input.value = ''
-                event.preventDefault()
-            }
-        </script>
-    </body>
-</html>
-"""
-
 
 @app.get("/")
 async def get():
-    return HTMLResponse(html)
-
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    while True:
-        data = await websocket.receive_text()
-        await websocket.send_text(f"Message text was: {data}")
+    return {"message": "Hello"}
 
 
 @app.post(
@@ -113,6 +76,19 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends()):
         "access_token": create_access_token(uuid=user.uuid, subject=user.email),
         "refresh_token": create_refresh_token(uuid=user.uuid, subject=user.email),
     }
+
+
+@app.exception_handler(TokenExpiredException)
+async def token_expired_exception_handler(request: Request, exc: HTTPException):
+    # Возвращаем редирект на страницу /auth
+    return RedirectResponse(url="/auth")
+
+
+# Обработчик для TokenNoFound
+@app.exception_handler(TokenNoFoundException)
+async def token_no_found_exception_handler(request: Request, exc: HTTPException):
+    # Возвращаем редирект на страницу /auth
+    return RedirectResponse(url="/auth")
 
 
 if __name__ == "__main__":

@@ -16,8 +16,6 @@ router = APIRouter(
 )
 
 
-
-
 @router.post("/signup", summary="Create new user", response_model=UserOut)
 async def create_user(data: UserAuth):
     # querying database to check if user already exist
