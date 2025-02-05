@@ -26,7 +26,7 @@ from blockchain_endpoints.views import router as blockchain_router
 
 app = FastAPI()
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
+# app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -47,35 +47,7 @@ app.include_router(router=blockchain_router)
 
 @app.get("/")
 async def get():
-    return {"message": "Hello"}
-
-
-@app.post(
-    "/login",
-    summary="Create access and refresh tokens for user",
-    response_model=TokenSchema,
-)
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    async with db_helper.session_factory() as session:
-        user = await get_user_by_username(session=session, username=form_data.username)
-    if user is None:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password",
-        )
-
-    hashed_pass = user.password
-    db_hash_password = get_hashed_password(form_data.password)
-    if not verify_password(db_hash_password, hashed_pass):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Incorrect email or password",
-        )
-
-    return {
-        "access_token": create_access_token(uuid=user.uuid, subject=user.email),
-        "refresh_token": create_refresh_token(uuid=user.uuid, subject=user.email),
-    }
+    return RedirectResponse(url="/auth")
 
 
 @app.exception_handler(TokenExpiredException)
