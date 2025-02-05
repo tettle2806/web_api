@@ -7,7 +7,7 @@ from fastapi.responses import Response
 from core.models import db_helper
 from exeptions import IncorrectEmailOrPasswordException
 from users.crud import get_user_by_email, create_user_crud, get_user_by_username
-from users.deps import get_current_user
+from users.deps import get_current_user, reuseable_oauth
 from users.schemas import UserOut, UserAuth, SystemUser, TokenSchema
 from users.utils import (
     get_hashed_password, verify_password, create_access_token, create_refresh_token,
@@ -69,6 +69,11 @@ async def login(response:Response ,form_data: OAuth2PasswordRequestForm = Depend
         "access_token": access_token,
         "refresh_token": refresh_token,
     }
+
+@router.post("/logout/")
+async def logout_user(response: Response):
+    response.delete_cookie(key="users_access_token")
+    return {'message': 'Пользователь успешно вышел из системы'}
 
 
 @router.get(

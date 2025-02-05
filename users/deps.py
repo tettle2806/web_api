@@ -12,7 +12,7 @@ from .utils import ALGORITHM, JWT_SECRET_KEY
 
 from users.schemas import TokenPayload, SystemUser
 
-reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/login", scheme_name="JWT")
+reuseable_oauth = OAuth2PasswordBearer(tokenUrl="/auth/login", scheme_name="JWT")
 
 
 async def get_current_user(token: str = Depends(reuseable_oauth)):
