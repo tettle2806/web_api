@@ -23,12 +23,12 @@ from core.config import settings
 from blockchain_endpoints.views import router as blockchain_router
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    async with db_helper.engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-
-    yield
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     async with db_helper.engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
+#
+#     yield
 
 
 app = FastAPI(lifespan=lifespan)
@@ -72,6 +72,7 @@ html = """
     </body>
 </html>
 """
+
 
 @app.get("/")
 async def get():
