@@ -8,6 +8,7 @@ __all__ = (
     "Profile",
     "Order",
     "OrderProductAssociation",
+    "Message",
 )
 
 
@@ -19,3 +20,4 @@ from .post import Post
 from .profile import Profile
 from .order import Order
 from .order_product_association import OrderProductAssociation
+from chat.models import Message
