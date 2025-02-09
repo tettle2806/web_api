@@ -76,6 +76,7 @@ async def logout_user(response: Response):
     return {'message': 'Пользователь успешно вышел из системы'}
 
 
+
 @router.get(
     "/me", summary="Get details of currently logged in user", response_model=UserOut
 )
