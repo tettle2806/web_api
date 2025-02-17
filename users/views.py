@@ -10,7 +10,10 @@ from users.crud import get_user_by_email, create_user_crud, get_user_by_username
 from users.deps import get_current_user, reuseable_oauth
 from users.schemas import UserOut, UserAuth, SystemUser, TokenSchema
 from users.utils import (
-    get_hashed_password, verify_password, create_access_token, create_refresh_token,
+    get_hashed_password,
+    verify_password,
+    create_access_token,
+    create_refresh_token,
 )
 
 router = APIRouter(
@@ -50,7 +53,7 @@ async def create_user(data: UserAuth):
     summary="Create access and refresh tokens for user",
     response_model=TokenSchema,
 )
-async def login(response:Response ,form_data: OAuth2PasswordRequestForm = Depends()):
+async def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends()):
     async with db_helper.session_factory() as session:
         user = await get_user_by_username(session=session, username=form_data.username)
     if user is None:
@@ -70,11 +73,11 @@ async def login(response:Response ,form_data: OAuth2PasswordRequestForm = Depend
         "refresh_token": refresh_token,
     }
 
+
 @router.post("/logout/")
 async def logout_user(response: Response):
     response.delete_cookie(key="users_access_token")
-    return {'message': 'Пользователь успешно вышел из системы'}
-
+    return {"message": "Пользователь успешно вышел из системы"}
 
 
 @router.get(

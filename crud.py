@@ -36,7 +36,7 @@ async def create_user_profile(
     )
     session.add(profile)
     await session.commit()
-    return profile
+      return profile
 
 
 async def show_users_with_profiles(session: AsyncSession):
