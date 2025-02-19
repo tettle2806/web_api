@@ -30,6 +30,7 @@ pyjwt = "^2.10.1"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 asyncpg = "^0.30.0"
 numpy = "^2.2.3"
+python-binance = "^1.0.27"
 
 
 [tool.poetry.group.dev.dependencies]
