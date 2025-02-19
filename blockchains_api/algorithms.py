@@ -8,12 +8,9 @@ import numpy as np
 import pandas as pd
 import pandas_ta as ta
 from tqdm import tqdm
-from numpy import nan as npNaN
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 from backtesting import Strategy
 from backtesting import Backtest
-from datetime import datetime
 
 df = pd.read_csv("EURUSD_Candlestick_5_M_ASK_30.09.2019-30.09.2022.csv")
 
