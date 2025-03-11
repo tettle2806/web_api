@@ -123,6 +123,7 @@ def SIGNAL():
     return df.TotalSignal
 
 
+
 class MyStrat(Strategy):
     mysize = 3000
     slcoef = 1.1
